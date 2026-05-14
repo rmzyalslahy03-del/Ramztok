@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>صندوق الوارد - RamzTok</title>
+    <style>
+        /* ========== الأنماط الموحدة مع باقي التطبيق ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* الشريط السفلي الموحد */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 12px;
+            border-top: 1px solid #222;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #aaa;
+            font-size: 12px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-item i {
+            font-size: 24px;
+            margin-bottom: 3px;
+        }
+        .nav-item.active {
+            color: #ff2a55;
+        }
+        /* الشريط العلوي الموحد */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 90;
+        }
+        .left-icons {
+            display: flex;
+            gap: 16px;
+        }
+        .search-icon, .live-icon {
+            color: white;
+            font-size: 22px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .search-icon:hover, .live-icon:hover {
+            opacity: 0.8;
+        }
+        .live-icon span {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .top-tabs {
+            display: flex;
+            gap: 30px;
+            font-weight: bold;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .tab-link {
+            color: #aaa;
+            text-decoration: none;
+            padding-bottom: 4px;
+            font-size: 16px;
+        }
+        .tab-link.active {
+            color: white;
+            border-bottom: 2px solid #ff2a55;
+        }
+        /* محتوى الوارد */
+        .inbox-container {
+            padding: 70px 16px 80px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        /* التبويبات الثانوية (للمحتوى) */
+        .sub-tabs {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            gap: 8px;
+            padding: 8px 0;
+            margin-bottom: 12px;
+        }
+        .sub-tab {
+            background: #1a1a1a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: #aaa;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .sub-tab.active {
+            background: #ff2a55;
+            color: white;
+        }
+        /* بطاقات القوائم */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            gap: 14px;
+            border-bottom: 0.5px solid #2c2c2c;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .list-item:active {
+            background: #1a1a1a;
+        }
+        .item-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #2c2c2c;
+        }
+        .item-info {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .item-detail {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+        .item-time {
+            font-size: 11px;
+            color: #777;
+        }
+        .badge {
+            background: #ff2a55;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        /* مودال المحادثة (يظل كما هو مع تعديل الألوان) */
+        .chat-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        .chat-modal.open {
+            transform: translateX(0);
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #000;
+            border-bottom: 0.5px solid #2c2c2c;
+            gap: 12px;
+        }
+        .chat-back {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .chat-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .chat-name {
+            flex: 1;
+            font-weight: bold;
+            font-size: 17px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+            position: relative;
+        }
+        .message-wrapper.sent {
+            align-self: flex-end;
+        }
+        .message-wrapper.received {
+            align-self: flex-start;
+        }
+        .message-bubble {
+            padding: 10px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            word-wrap: break-word;
+        }
+        .received .message-bubble {
+            background: #2c2c2c;
+            border-bottom-left-radius: 4px;
+        }
+        .sent .message-bubble {
+            background: #ff2a55;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-input-area {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #111;
+            border-top: 0.5px solid #2c2c2c;
+            gap: 8px;
+        }
+        .chat-input {
+            flex: 1;
+            background: #2c2c2c;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+        .send-btn {
+            background: #ff2a55;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        #globalToast {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: #1f1f1f;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 40px;
+            text-align: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            font-size: 14px;
+            border-left: 4px solid #ff2a55;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <!-- الشريط العلوي الموحد -->
+    <div class="top-bar">
+        <div class="left-icons">
+            <button class="search-icon" id="searchButton"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="top-tabs">
+            <a href="home.html" class="tab-link">لك</a>
+            <a href="following.html" class="tab-link">المتابَعون</a>
+            <a href="search.html" class="tab-link">استكشاف</a>
+        </div>
+        <div class="left-icons">
+            <button class="live-icon" id="liveButton"><i class="fas fa-video"></i><span>Live</span></button>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="inbox-container" id="inboxContainer">
+        <!-- سيتم تعبئته ديناميكياً -->
+    </div>
+
+    <!-- الشريط السفلي الموحد -->
+    <div class="bottom-nav">
+        <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>الرئيسية</span></a>
+        <a href="friends.html" class="nav-item"><i class="fas fa-users"></i><span>الأصدقاء</span></a>
+        <a href="upload.html" class="nav-item"><i class="fas fa-plus-circle"></i><span>إنشاء</span></a>
+        <a href="inbox.html" class="nav-item active"><i class="fas fa-inbox"></i><span>الوارد</span></a>
+        <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>الملف</span></a>
+    </div>
+
+    <!-- مودال المحادثة -->
+    <div id="chatModal" class="chat-modal">
+        <div class="chat-header">
+            <button class="chat-back" id="closeChatBtn"><i class="fas fa-arrow-right"></i></button>
+            <img id="chatAvatar" class="chat-avatar" src="">
+            <div id="chatName" class="chat-name"></div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" class="chat-input" placeholder="اكتب رسالة...">
+            <button id="sendMessageBtn" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div id="globalToast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ==================== تهيئة Supabase موحدة ====================
+        const SUPABASE_URL = 'https://fqowxtghefuykxyyrttk.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_StGuaVLO7lfCsKF0Fr1dHQ_m10dbTOO';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let userId = localStorage.getItem('ramztok_user_id');
+        if (!userId) {
+            userId = 'user_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('ramztok_user_id', userId);
+        }
+        let currentUsername = localStorage.getItem('ramztok_username');
+        if (!currentUsername) {
+            currentUsername = 'ramz_tok';
+            localStorage.setItem('ramztok_username', currentUsername);
+        }
+
+        function formatNumber(num) {
+            if (num === undefined || num === null) return '0';
+            if (num >= 5000) {
+                if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+                if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+                return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+            }
+            return num.toString();
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('globalToast');
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            toast.style.backgroundColor = isError ? '#3a1e1e' : '#1f1f1f';
+            toast.style.borderLeftColor = isError ? '#ff4444' : '#ff2a55';
+            setTimeout(() => toast.style.opacity = '0', 3000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]);
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'الآن';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} دقيقة`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} ساعة`;
+            const days = Math.floor(hours / 24);
+            if (days < 7) return `${days} يوم`;
+            return date.toLocaleDateString('ar');
+        }
+
+        // ==================== جلب الإشعارات الحقيقية من Supabase ====================
+        async function fetchRealNotifications() {
+            const notifications = [];
+
+            // 1. المتابعات: من جدول follows حيث followed_user = currentUsername
+            const { data: follows, error: fErr } = await supabase
+                .from('follows')
+                .select('user_id, followed_at')
+                .eq('followed_user', currentUsername)
+                .order('followed_at', { ascending: false });
+            if (!fErr && follows) {
+                for (const follow of follows) {
+                    // نحاول جلب اسم المستخدم المتابِع من جدول videos
+                    let actorName = follow.user_id.replace('user_', '');
+                    const { data: actorVideo } = await supabase
+                        .from('videos')
+                        .select('user_name, user_avatar')
+                        .eq('user_name', actorName)
+                        .maybeSingle();
+                    if (actorVideo) {
+                        notifications.push({
+                            id: `follow_${follow.user_id}`,
+                            type: 'follow',
+                            actor: actorVideo.user_name,
+                            avatar: actorVideo.user_avatar || 'https://randomuser.me/api/portraits/lego/1.jpg',
+                            message: 'بدأ متابعتك',
+                            time: follow.followed_at
+                        });
+                    } else {
+                        notifications.push({
+                            id: `follow_${follow.user_id}`,
+                            type: 'follow',
+                            actor: actorName,
+                            avatar: 'https://randomuser.me/api/portraits/lego/1.jpg',
+                            message: 'بدأ متابعتك',
+                            time: follow.followed_at
+                        });
+                    }
+                }
+            }
+
+            // 2. الإعجابات على فيديوهاتي
+            const { data: myVideos } = await supabase
+                .from('videos')
+                .select('id')
+                .eq('user_name', currentUsername);
+            if (myVideos && myVideos.length) {
+                const videoIds = myVideos.map(v => v.id);
+                const { data: likes } = await supabase
+                    .from('video_likes')
+                    .select('user_id, video_id, liked_at')
+                    .in('video_id', videoIds)
+                    .order('liked_at', { ascending: false });
+                if (likes) {
+                    for (const like of likes) {
+                        let actorName = like.user_id.replace('user_', '');
+                        const { data: actorVideo } = await supabase
+                            .from('videos')
+                            .select('user_name, user_avatar')
+                            .eq('user_name', actorName)
+                            .maybeSingle();
+                        notifications.push({
+                            id: `like_${like.user_id}_${like.video_id}`,
+                            type: 'like',
+                            actor: actorVideo ? actorVideo.user_name : actorName,
+                            avatar: actorVideo ? actorVideo.user_avatar : 'https://randomuser.me/api/portraits/lego/1.jpg',
+                            message: 'أعجب بأحد فيديوهاتك',
+                            time: like.liked_at
+                        });
+                    }
+                }
+            }
+
+            // ترتيب حسب الأحدث
+            notifications.sort((a, b) => new Date(b.time) - new Date(a.time));
+            return notifications;
+        }
+
+        // ==================== بيانات وهمية للمحادثات (يمكن ربطها بجدول messages مستقبلاً) ====================
+        let conversations = [
+            {
+                id: 1, name: "يوسف الحالم", avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+                lastMessage: "فيديو رائع 🔥", time: "الآن", unread: 2, messages: [
+                    { id: 101, text: "شلونك يا غالي؟", sender: "other", time: "10:30", reactions: [] },
+                    { id: 102, text: "والله فديو روعة 🔥 استمر", sender: "other", time: "10:32", reactions: [] },
+                    { id: 103, text: "تسلم حبيبي 🤍", sender: "me", time: "10:35", reactions: [] }
+                ] },
+            {
+                id: 2, name: "سارة تيك", avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+                lastMessage: "تعال خاص", time: "منذ ساعة", unread: 0, messages: [
+                    { id: 201, text: "مرحبا سارة", sender: "me", time: "09:00", reactions: [] },
+                    { id: 202, text: "تعال خاص محتاج مساعدة بسرعة", sender: "other", time: "09:15", reactions: [] }
+                ] }
+        ];
+
+        let messageRequests = []; // يمكن جلبها من جدول requests لاحقاً
+
+        // ==================== دوال عرض المحتوى ====================
+        let currentMainTab = "notifications"; // notifications, conversations, requests, interactions, system, privacy
+        let currentSubTab = null;
+        let activeChatId = null;
+        let replyingToMessage = null;
+        let currentMediaFile = null;
+
+        const inboxContainer = document.getElementById('inboxContainer');
+        const chatModal = document.getElementById('chatModal');
+        const closeChatBtn = document.getElementById('closeChatBtn');
+        const sendMsgBtn = document.getElementById('sendMessageBtn');
+        const messageInput = document.getElementById('messageInput');
+        const chatMessagesDiv = document.getElementById('chatMessages');
+        const chatAvatar = document.getElementById('chatAvatar');
+        const chatNameSpan = document.getElementById('chatName');
+
+        function renderConversations() {
+            if (conversations.length === 0) return '<div class="empty-state"><i class="far fa-comments"></i><p>لا توجد محادثات</p></div>';
+            let html = '';
+            conversations.forEach(c => {
+                html += `
+                    <div class="list-item" data-chat-id="${c.id}">
+                        <img src="${c.avatar}" class="item-avatar">
+                        <div class="item-info">
+                            <div class="item-name">${escapeHtml(c.name)}</div>
+                            <div class="item-detail">${escapeHtml(c.lastMessage)}</div>
+                        </div>
+                        <div class="item-time">${c.time}</div>
+                        ${c.unread ? `<div class="badge">${c.unread}</div>` : ''}
+                    </div>
+                `;
+            });
+            return html;
+        }
+
+        async function renderNotifications() {
+            const notifications = await fetchRealNotifications();
+            if (notifications.length === 0) return '<div class="empty-state"><i class="far fa-bell"></i><p>لا توجد إشعارات جديدة</p></div>';
+            let html = '';
+            for (const n of notifications) {
+                html += `
+                    <div class="list-item" data-actor="${n.actor}" data-type="${n.type}">
+                        <img src="${n.avatar}" class="item-avatar">
+                        <div class="item-info">
+                            <div class="item-name">${escapeHtml(n.actor)}</div>
+                            <div class="item-detail">${escapeHtml(n.message)}</div>
+                        </div>
+                        <div class="item-time">${getTimeAgo(new Date(n.time))}</div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+
+        function renderRequests() {
+            if (messageRequests.length === 0) return '<div class="empty-state"><i class="far fa-envelope"></i><p>لا توجد طلبات مراسلة</p></div>';
+            let html = '';
+            messageRequests.forEach(req => {
+                html += `
+                    <div class="list-item" data-request-id="${req.id}">
+                        <img src="${req.avatar}" class="item-avatar">
+                        <div class="item-info">
+                            <div class="item-name">${escapeHtml(req.name)}</div>
+                            <div class="item-detail">${escapeHtml(req.message)}</div>
+                        </div>
+                        <div class="item-time">${req.time}</div>
+                        <button class="badge" style="background:#2c2c2c;">رد</button>
+                    </div>
+                `;
+            });
+            return html;
+        }
+
+        function renderInteractions() {
+            return `
+                <div class="sub-tabs">
+                    <button class="sub-tab ${currentSubTab === 'likes' ? 'active' : ''}" data-sub="likes">إعجابات</button>
+                    <button class="sub-tab ${currentSubTab === 'comments' ? 'active' : ''}" data-sub="comments">تعليقات</button>
+                    <button class="sub-tab ${currentSubTab === 'views' ? 'active' : ''}" data-sub="views">زيارات الملف</button>
+                </div>
+                <div id="subContent"></div>
+            `;
+        }
+
+        function renderSystem() {
+            return `<div class="empty-state"><i class="fas fa-cog"></i><p>إشعارات النظام (قريباً)</p></div>`;
+        }
+
+        function renderPrivacy() {
+            return `<div class="empty-state"><i class="fas fa-lock"></i><p>خيارات الخصوصية قريباً</p></div>`;
+        }
+
+        async function renderMainContent() {
+            let content = '';
+            if (currentMainTab === 'notifications') {
+                content = await renderNotifications();
+            } else if (currentMainTab === 'conversations') {
+                content = renderConversations();
+            } else if (currentMainTab === 'requests') {
+                content = renderRequests();
+            } else if (currentMainTab === 'interactions') {
+                content = renderInteractions();
+                inboxContainer.innerHTML = content;
+                // بعد عرض التبويبات الفرعية، نضيف أحداثها
+                document.querySelectorAll('.sub-tab').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        currentSubTab = btn.dataset.sub;
+                        renderMainContent();
+                    });
+                });
+                return;
+            } else if (currentMainTab === 'system') {
+                content = renderSystem();
+            } else if (currentMainTab === 'privacy') {
+                content = renderPrivacy();
+            }
+            inboxContainer.innerHTML = content;
+
+            // إضافة أحداث النقر على المحادثات
+            document.querySelectorAll('[data-chat-id]').forEach(el => {
+                el.addEventListener('click', () => openChat(parseInt(el.dataset.chatId)));
+            });
+            document.querySelectorAll('[data-actor]').forEach(el => {
+                el.addEventListener('click', () => {
+                    const actor = el.dataset.actor;
+                    if (actor) window.location.href = `profile.html?user=${actor}`;
+                });
+            });
+        }
+
+        // ==================== دوال المحادثة ====================
+        function openChat(chatId) {
+            activeChatId = chatId;
+            const conv = conversations.find(c => c.id === chatId);
+            if (!conv) return;
+            chatNameSpan.innerText = conv.name;
+            chatAvatar.src = conv.avatar;
+            renderChatMessages(conv);
+            chatModal.classList.add('open');
+            if (conv.unread > 0) {
+                conv.unread = 0;
+                if (currentMainTab === 'conversations') renderMainContent();
+            }
+            setTimeout(() => chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight, 100);
+            replyingToMessage = null;
+            currentMediaFile = null;
+            messageInput.placeholder = "اكتب رسالة...";
+        }
+
+        function renderChatMessages(conv) {
+            chatMessagesDiv.innerHTML = '';
+            conv.messages.forEach(msg => {
+                const wrapper = document.createElement('div');
+                wrapper.className = `message-wrapper ${msg.sender === 'me' ? 'sent' : 'received'}`;
+                wrapper.innerHTML = `<div class="message-bubble">${escapeHtml(msg.text)}</div>`;
+                chatMessagesDiv.appendChild(wrapper);
+            });
+        }
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            const conv = conversations.find(c => c.id === activeChatId);
+            if (!conv) return;
+            const newMsg = { id: Date.now(), text, sender: 'me', time: new Date().toLocaleTimeString(), reactions: [] };
+            conv.messages.push(newMsg);
+            conv.lastMessage = text;
+            conv.time = 'الآن';
+            renderChatMessages(conv);
+            messageInput.value = '';
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+            if (currentMainTab === 'conversations') renderMainContent();
+            // رد تلقائي وهمي
+            if (text.includes('مرحبا') || text.includes('السلام')) {
+                setTimeout(() => {
+                    const autoReply = { id: Date.now()+1, text: "وعليكم السلام! شكراً لتواصلك 🤍", sender: 'other', time: new Date().toLocaleTimeString(), reactions: [] };
+                    conv.messages.push(autoReply);
+                    conv.lastMessage = autoReply.text;
+                    conv.unread++;
+                    renderChatMessages(conv);
+                    if (currentMainTab === 'conversations') renderMainContent();
+                    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+                }, 1000);
+            }
+        }
+
+        function closeChat() {
+            chatModal.classList.remove('open');
+            activeChatId = null;
+            messageInput.value = '';
+            replyingToMessage = null;
+            currentMediaFile = null;
+        }
+
+        // ==================== تبديل التبويبات الرئيسية ====================
+        function addMainTabs() {
+            const tabsHtml = `
+                <div class="sub-tabs" style="margin-bottom:16px;">
+                    <button class="sub-tab main-tab ${currentMainTab === 'notifications' ? 'active' : ''}" data-main="notifications">📢 إشعارات</button>
+                    <button class="sub-tab main-tab ${currentMainTab === 'conversations' ? 'active' : ''}" data-main="conversations">💬 محادثات</button>
+                    <button class="sub-tab main-tab ${currentMainTab === 'requests' ? 'active' : ''}" data-main="requests">📨 طلبات</button>
+                    <button class="sub-tab main-tab ${currentMainTab === 'interactions' ? 'active' : ''}" data-main="interactions">❤️ تفاعلات</button>
+                    <button class="sub-tab main-tab ${currentMainTab === 'system' ? 'active' : ''}" data-main="system">⚙️ نظام</button>
+                    <button class="sub-tab main-tab ${currentMainTab === 'privacy' ? 'active' : ''}" data-main="privacy">🔒 خصوصية</button>
+                </div>
+                <div id="mainContent"></div>
+            `;
+            inboxContainer.innerHTML = tabsHtml;
+            document.querySelectorAll('.main-tab').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentMainTab = btn.dataset.main;
+                    currentSubTab = null;
+                    document.querySelectorAll('.main-tab').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderMainContent();
+                });
+            });
+            renderMainContent();
+        }
+
+        // ==================== أحداث عامة ====================
+        document.getElementById('searchButton').addEventListener('click', () => window.location.href = 'search.html');
+        document.getElementById('liveButton').addEventListener('click', () => window.location.href = 'live.html');
+        closeChatBtn.addEventListener('click', closeChat);
+        sendMsgBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+
+        // بدء التشغيل
+        addMainTabs();
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(console.log);
+        }
+    </script>
+</body>
+</html>
