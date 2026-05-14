@@ -1,0 +1,32 @@
+{
+  "name": "ramztok",
+  "version": "1.0.0",
+  "description": "منصة مشاركة فيديوهات قصيرة – RamzTok",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx live-server --port=3000 --no-browser",
+    "build": "echo 'لا توجد عملية بناء مطلوبة'",
+    "test": "echo 'لا توجد اختبارات حالياً'"
+  },
+  "keywords": [
+    "tiktok",
+    "clone",
+    "videos",
+    "social-media",
+    "supabase"
+  ],
+  "author": "RamzTok Team",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ramztok/ramztok-app"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
