@@ -3,8 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+  <!-- PWA meta tags -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ff2a55" id="themeColorMeta">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RamzTok">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
   <title>RamzTok | الملف الشخصي</title>
   <style>
+    /* تعريف الألوان الأساسية للثيمات */
+    :root {
+      --primary: #ff2a55;
+      --primary-dark: #d41a44;
+      --primary-light: #ff5a7a;
+      --bg: #000000;
+      --surface: #1a1a1a;
+      --surface-light: #2c2c2c;
+      --text: #ffffff;
+      --text-secondary: #aaaaaa;
+      --border: #333333;
+      --glass-bg: rgba(0,0,0,0.85);
+      --glass-blur: blur(10px);
+    }
+
+    /* الثيم الأزرق */
+    body.theme-blue {
+      --primary: #2196f3;
+      --primary-dark: #0b5e9e;
+      --primary-light: #64b5f6;
+    }
+
+    /* الثيم الأخضر */
+    body.theme-green {
+      --primary: #4caf50;
+      --primary-dark: #2e7d32;
+      --primary-light: #81c784;
+    }
+
+    /* الثيم الذهبي */
+    body.theme-gold {
+      --primary: #ffc107;
+      --primary-dark: #b8860b;
+      --primary-light: #ffd54f;
+    }
+
+    /* الثيم الوردي */
+    body.theme-pink {
+      --primary: #e91e63;
+      --primary-dark: #ad1457;
+      --primary-light: #f06292;
+    }
+
+    /* الثيم البنفسجي */
+    body.theme-purple {
+      --primary: #9c27b0;
+      --primary-dark: #6a1b9a;
+      --primary-light: #ce93d8;
+    }
+
+    /* الثيم البرتقالي */
+    body.theme-orange {
+      --primary: #ff9800;
+      --primary-dark: #c66900;
+      --primary-light: #ffb74d;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -13,26 +79,27 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #000;
-      color: white;
+      background: var(--bg);
+      color: var(--text);
       height: 100vh;
       overflow: hidden;
+      transition: background 0.2s, color 0.2s;
     }
 
-    /* الشريط السفلي الثابت معكوس */
+    /* الشريط السفلي */
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(10px);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
       display: flex;
       flex-direction: row-reverse;
       justify-content: space-around;
       align-items: center;
       padding: 8px 0 12px;
-      border-top: 1px solid #222;
+      border-top: 1px solid var(--border);
       z-index: 100;
     }
 
@@ -40,7 +107,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #aaa;
+      color: var(--text-secondary);
       font-size: 12px;
       text-decoration: none;
       transition: color 0.2s, transform 0.2s;
@@ -57,10 +124,10 @@
     }
 
     .nav-item.active {
-      color: #ff2a55;
+      color: var(--primary);
     }
 
-    /* الشريط العلوي الموحد */
+    /* الشريط العلوي */
     .top-bar {
       position: fixed;
       top: 0;
@@ -112,7 +179,7 @@
     }
 
     .tab-link {
-      color: #aaa;
+      color: var(--text-secondary);
       text-decoration: none;
       padding-bottom: 4px;
       font-size: 16px;
@@ -120,12 +187,12 @@
     }
 
     .tab-link:hover {
-      color: white;
+      color: var(--text);
     }
 
     .tab-link.active {
       color: white;
-      border-bottom: 2px solid #ff2a55;
+      border-bottom: 2px solid var(--primary);
     }
 
     /* محتوى الملف الشخصي */
@@ -147,7 +214,7 @@
       width: 100px;
       height: 100px;
       border-radius: 50%;
-      border: 3px solid #ff2a55;
+      border: 3px solid var(--primary);
       object-fit: cover;
       cursor: pointer;
       margin-bottom: 12px;
@@ -167,7 +234,7 @@
     }
 
     .username {
-      color: #aaa;
+      color: var(--text-secondary);
       font-size: 14px;
       margin-top: 4px;
     }
@@ -201,7 +268,7 @@
 
     .stat-label {
       font-size: 12px;
-      color: #aaa;
+      color: var(--text-secondary);
     }
 
     .action-buttons {
@@ -211,11 +278,11 @@
     }
 
     .action-btn {
-      background: #2c2c2c;
+      background: var(--surface-light);
       border: none;
       padding: 8px 24px;
       border-radius: 30px;
-      color: white;
+      color: var(--text);
       font-weight: 600;
       font-size: 14px;
       cursor: pointer;
@@ -231,14 +298,14 @@
     }
 
     .follow-btn {
-      background: #ff2a55;
+      background: var(--primary);
     }
 
     .follow-btn:hover {
-      background: #e01e48;
+      background: var(--primary-dark);
     }
 
-    /* ========== شريط التبويبات المتقدم (قابل للسحب) ========== */
+    /* شريط التبويبات */
     .tabs-wrapper {
       position: relative;
       margin: 20px 0 12px;
@@ -254,22 +321,25 @@
       padding-bottom: 8px;
       gap: 8px;
     }
+
     .scrollable-tabs::-webkit-scrollbar {
       height: 3px;
     }
+
     .scrollable-tabs::-webkit-scrollbar-track {
-      background: #2c2c2c;
+      background: var(--surface);
       border-radius: 10px;
     }
+
     .scrollable-tabs::-webkit-scrollbar-thumb {
-      background: #ff2a55;
+      background: var(--primary);
       border-radius: 10px;
     }
 
     .scrollable-tab {
       background: none;
       border: none;
-      color: #aaa;
+      color: var(--text-secondary);
       padding: 8px 16px;
       border-radius: 40px;
       font-size: 14px;
@@ -283,20 +353,21 @@
     }
 
     .scrollable-tab:hover {
-      background: #2c2c2c;
-      color: white;
+      background: var(--surface-light);
+      color: var(--text);
     }
 
     .scrollable-tab.active {
-      background: #ff2a55;
+      background: var(--primary);
       color: white;
-      box-shadow: 0 2px 8px rgba(255,42,85,0.3);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
-    /* التبويبات الثانوية (وسيطة) */
+    /* التبويبات الثانوية */
     .secondary-tabs-wrapper {
       margin: 8px 0 16px;
     }
+
     .secondary-scroll {
       display: flex;
       overflow-x: auto;
@@ -305,11 +376,15 @@
       white-space: nowrap;
       scrollbar-width: thin;
     }
-    .secondary-scroll::-webkit-scrollbar { height: 2px; }
+
+    .secondary-scroll::-webkit-scrollbar {
+      height: 2px;
+    }
+
     .secondary-tab {
-      background: #1a1a1a;
+      background: var(--surface);
       border: none;
-      color: #aaa;
+      color: var(--text-secondary);
       padding: 5px 12px;
       border-radius: 20px;
       font-size: 12px;
@@ -321,17 +396,19 @@
       align-items: center;
       gap: 4px;
     }
+
     .secondary-tab:hover {
-      background: #2c2c2c;
-      color: white;
+      background: var(--surface-light);
+      color: var(--text);
       transform: translateY(-1px);
     }
+
     .secondary-tab.active {
-      background: #ff2a55;
+      background: var(--primary);
       color: white;
     }
 
-    /* أزرار تصدير واستيراد */
+    /* أزرار التصدير والاستيراد */
     .export-buttons {
       display: flex;
       gap: 10px;
@@ -340,11 +417,11 @@
     }
 
     .export-btn {
-      background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+      background: linear-gradient(135deg, var(--surface-light), var(--surface));
       border: none;
       padding: 8px 16px;
       border-radius: 30px;
-      color: white;
+      color: var(--text);
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
@@ -356,10 +433,10 @@
     .export-btn:hover {
       background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
       transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(255,42,85,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
-    /* شبكة معاينة الفيديوهات */
+    /* شبكة الفيديوهات */
     .videos-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -369,7 +446,7 @@
 
     .video-thumb {
       aspect-ratio: 9 / 16;
-      background: #1a1a1a;
+      background: var(--surface);
       position: relative;
       cursor: pointer;
       border-radius: 8px;
@@ -418,7 +495,7 @@
       grid-column: span 3;
       text-align: center;
       padding: 40px;
-      color: #aaa;
+      color: var(--text-secondary);
     }
 
     /* مودال التعديل المتقدم */
@@ -451,13 +528,13 @@
       overflow-y: auto;
       border-radius: 24px;
       padding: 20px;
-      color: white;
+      color: var(--text);
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     .modal-content h3 {
       margin-bottom: 16px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid var(--border);
       padding-bottom: 8px;
       display: flex;
       align-items: center;
@@ -472,23 +549,23 @@
       display: block;
       margin-bottom: 6px;
       font-size: 13px;
-      color: #aaa;
+      color: var(--text-secondary);
     }
 
     .modal-group input, .modal-group textarea {
       width: 100%;
-      background: #2c2c2c;
+      background: var(--surface-light);
       border: none;
       border-radius: 12px;
       padding: 12px;
-      color: white;
+      color: var(--text);
       font-size: 14px;
       transition: 0.2s;
     }
 
     .modal-group input:focus, .modal-group textarea:focus {
       outline: none;
-      box-shadow: 0 0 0 2px #ff2a55;
+      box-shadow: 0 0 0 2px var(--primary);
     }
 
     .checkbox-group {
@@ -501,11 +578,11 @@
     .checkbox-group input {
       width: 20px;
       height: 20px;
-      accent-color: #ff2a55;
+      accent-color: var(--primary);
     }
 
     .danger-btn {
-      background: linear-gradient(135deg, #ff2a55, #d41a44);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       border: none;
       padding: 10px;
       border-radius: 30px;
@@ -527,6 +604,40 @@
       margin-top: 8px;
     }
 
+    /* قائمة اختيار الثيم */
+    .theme-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .theme-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s;
+    }
+
+    .theme-option:hover {
+      transform: scale(1.1);
+    }
+
+    .theme-option.selected {
+      border-color: white;
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+
+    .theme-default { background: #ff2a55; }
+    .theme-blue { background: #2196f3; }
+    .theme-green { background: #4caf50; }
+    .theme-gold { background: #ffc107; }
+    .theme-pink { background: #e91e63; }
+    .theme-purple { background: #9c27b0; }
+    .theme-orange { background: #ff9800; }
+
     #globalToast {
       position: fixed;
       bottom: 80px;
@@ -542,7 +653,7 @@
       transition: opacity 0.2s;
       pointer-events: none;
       font-size: 14px;
-      border-left: 4px solid #ff2a55;
+      border-left: 4px solid var(--primary);
     }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -551,7 +662,7 @@
 
   <div class="top-bar">
     <div class="left-icons">
-      <button class="search-icon" id="searchButton"><i class="fas fa-search"></i><span style="display:none;">بحث</span></button>
+      <button class="search-icon" id="searchButton"><i class="fas fa-search"></i></button>
     </div>
     <div class="top-tabs">
       <a href="home.html" class="tab-link"><i class="fas fa-home"></i> لك</a>
@@ -563,9 +674,7 @@
     </div>
   </div>
 
-  <div class="profile-container" id="profileContainer">
-    <!-- سيتم تعبئته ديناميكياً -->
-  </div>
+  <div class="profile-container" id="profileContainer"></div>
 
   <div class="bottom-nav">
     <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>الرئيسية</span></a>
@@ -608,8 +717,23 @@
           <input type="checkbox" id="notifyFollows"> <label for="notifyFollows"><i class="fas fa-user-plus"></i> إشعارات المتابعات</label>
         </div>
       </div>
+
+      <!-- قسم اختيار الثيم -->
+      <div class="modal-group">
+        <label><i class="fas fa-palette"></i> ألوان الواجهة (الثيم)</label>
+        <div class="theme-selector" id="themeSelector">
+          <div class="theme-option theme-default" data-theme="default" title="أحمر (افتراضي)"></div>
+          <div class="theme-option theme-blue" data-theme="blue" title="أزرق"></div>
+          <div class="theme-option theme-green" data-theme="green" title="أخضر"></div>
+          <div class="theme-option theme-gold" data-theme="gold" title="ذهبي"></div>
+          <div class="theme-option theme-pink" data-theme="pink" title="وردي"></div>
+          <div class="theme-option theme-purple" data-theme="purple" title="بنفسجي"></div>
+          <div class="theme-option theme-orange" data-theme="orange" title="برتقالي"></div>
+        </div>
+      </div>
+
       <button id="saveAllSettingsBtn" class="danger-btn"><i class="fas fa-save"></i> حفظ جميع التغييرات</button>
-      <button id="deleteAccountBtn" class="danger-btn" style="background:#ff2a55;"><i class="fas fa-trash-alt"></i> حذف الحساب نهائياً</button>
+      <button id="deleteAccountBtn" class="danger-btn" style="background: linear-gradient(135deg, #ff2a55, #d41a44);"><i class="fas fa-trash-alt"></i> حذف الحساب نهائياً</button>
       <button id="closeModalBtn" class="close-modal"><i class="fas fa-times"></i> إلغاء</button>
     </div>
   </div>
@@ -618,7 +742,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // ==================== تهيئة Supabase (باستخدام supabaseClient) ====================
+    // ==================== تهيئة Supabase ====================
     const SUPABASE_URL = 'https://fqowxtghefuykxyyrttk.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_StGuaVLO7lfCsKF0Fr1dHQ_m10dbTOO';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -661,6 +785,41 @@
         if (m === '<') return '&lt;';
         if (m === '>') return '&gt;';
         return m;
+      });
+    }
+
+    // ==================== الثيم ====================
+    function applyTheme(themeName) {
+      const body = document.body;
+      // إزالة جميع الثيمات السابقة
+      body.classList.remove('theme-blue', 'theme-green', 'theme-gold', 'theme-pink', 'theme-purple', 'theme-orange');
+      if (themeName && themeName !== 'default') {
+        body.classList.add(`theme-${themeName}`);
+      }
+      // تحديث لون theme-color في meta
+      let primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+      document.getElementById('themeColorMeta').setAttribute('content', primaryColor);
+      localStorage.setItem('ramztok_theme', themeName || 'default');
+    }
+
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem('ramztok_theme');
+      if (savedTheme && savedTheme !== 'default') {
+        applyTheme(savedTheme);
+        // تحديد الخيار في المودال (عند فتحه)
+      } else {
+        applyTheme('default');
+      }
+    }
+
+    function highlightSelectedTheme(themeName) {
+      document.querySelectorAll('.theme-option').forEach(opt => {
+        opt.classList.remove('selected');
+        if (opt.dataset.theme === themeName) {
+          opt.classList.add('selected');
+        } else if (themeName === 'default' && opt.dataset.theme === 'default') {
+          opt.classList.add('selected');
+        }
       });
     }
 
@@ -762,7 +921,7 @@
       renderProfile();
     }
 
-    async function updateProfileSettings(displayName, bio, newEmail, newPassword, notifySettings) {
+    async function updateProfileSettings(displayName, bio, newEmail, newPassword, notifySettings, theme) {
       const { error: profileError } = await supabaseClient
         .from('profiles')
         .upsert({
@@ -789,6 +948,8 @@
       localStorage.setItem('notifyLikes', notifySettings.likes);
       localStorage.setItem('notifyComments', notifySettings.comments);
       localStorage.setItem('notifyFollows', notifySettings.follows);
+
+      if (theme) applyTheme(theme);
 
       profileData.display_name = displayName;
       profileData.bio = bio;
@@ -897,74 +1058,61 @@
         </div>
 
         <div class="secondary-tabs-wrapper">
-  <div class="secondary-scroll" id="secondaryTabsContainer">
-    <!-- الأزرار الموجودة سابقاً -->
-    <button class="secondary-tab" data-page="settings.html"><i class="fas fa-sliders-h"></i> الإعدادات</button>
-    <button class="secondary-tab" data-page="analytics.html"><i class="fas fa-chart-line"></i> التحليلات</button>
-    <button class="secondary-tab" data-page="privacy.html"><i class="fas fa-lock"></i> الخصوصية</button>
-    <button class="secondary-tab" data-page="terms.html"><i class="fas fa-file-alt"></i> الشروط</button>
-    <button class="secondary-tab" data-page="support.html"><i class="fas fa-headset"></i> الدعم</button>
-    <button class="secondary-tab" data-page="developers.html"><i class="fas fa-code"></i> المطورين</button>
-    <button class="secondary-tab" data-page="forgot-password.html"><i class="fas fa-key"></i> نسيت كلمة المرور</button>
-    <button class="secondary-tab" data-page="setup.html"><i class="fas fa-cog"></i> الإعداد</button>
-    <button class="secondary-tab" data-page="discover.html"><i class="fas fa-compass"></i> اكتشف</button>
-    <button class="secondary-tab" data-page="offline.html"><i class="fas fa-wifi-slash"></i> وضع عدم الاتصال</button>
-    <button class="secondary-tab" data-page="ramztok.html"><i class="fas fa-globe"></i> RamzTok الخارجية</button>
-    <button class="secondary-tab" data-page="ads.html"><i class="fas fa-ad"></i> الإعلانات</button>
-    <button class="secondary-tab" data-page="music.html"><i class="fas fa-music"></i> الموسيقى 🎶</button>
-    <button class="secondary-tab" data-page="integrations.html"><i class="fas fa-plug"></i> التكامل مع المكتبات الخارجية</button>
-    <button class="secondary-tab" data-page="shop.html"><i class="fas fa-shopping-cart"></i> التسوق</button>
-    <button class="secondary-tab" data-page="wallet.html"><i class="fas fa-wallet"></i> المحفظة</button>
+          <div class="secondary-scroll" id="secondaryTabsContainer">
+            <button class="secondary-tab" data-page="settings.html"><i class="fas fa-sliders-h"></i> الإعدادات</button>
+            <button class="secondary-tab" data-page="analytics.html"><i class="fas fa-chart-line"></i> التحليلات</button>
+            <button class="secondary-tab" data-page="privacy.html"><i class="fas fa-lock"></i> الخصوصية</button>
+            <button class="secondary-tab" data-page="terms.html"><i class="fas fa-file-alt"></i> الشروط</button>
+            <button class="secondary-tab" data-page="support.html"><i class="fas fa-headset"></i> الدعم</button>
+            <button class="secondary-tab" data-page="developers.html"><i class="fas fa-code"></i> المطورين</button>
+            <button class="secondary-tab" data-page="forgot-password.html"><i class="fas fa-key"></i> نسيت كلمة المرور</button>
+            <button class="secondary-tab" data-page="setup.html"><i class="fas fa-cog"></i> الإعداد</button>
+            <button class="secondary-tab" data-page="discover.html"><i class="fas fa-compass"></i> اكتشف</button>
+            <button class="secondary-tab" data-page="offline.html"><i class="fas fa-wifi-slash"></i> وضع عدم الاتصال</button>
+            <button class="secondary-tab" data-page="ramztok.html"><i class="fas fa-globe"></i> RamzTok الخارجية</button>
+            <button class="secondary-tab" data-page="ads.html"><i class="fas fa-ad"></i> الإعلانات</button>
+            <button class="secondary-tab" data-page="music.html"><i class="fas fa-music"></i> الموسيقى 🎶</button>
+            <button class="secondary-tab" data-page="integrations.html"><i class="fas fa-plug"></i> التكامل مع المكتبات الخارجية</button>
+            <button class="secondary-tab" data-page="shop.html"><i class="fas fa-shopping-cart"></i> التسوق</button>
+            <button class="secondary-tab" data-page="wallet.html"><i class="fas fa-wallet"></i> المحفظة</button>
+            <button class="secondary-tab" data-page="subscriptions.html"><i class="fas fa-ticket-alt"></i> الاشتراكات</button>
+            <button class="secondary-tab" data-page="certificates.html"><i class="fas fa-award"></i> الشهادات</button>
+            <button class="secondary-tab" data-page="leaderboard.html"><i class="fas fa-trophy"></i> لوحة المتصدرين</button>
+            <button class="secondary-tab" data-page="2fa.html"><i class="fas fa-shield-alt"></i> المصادقة الثنائية</button>
+            <button class="secondary-tab" data-page="live-replays.html"><i class="fas fa-video"></i> تسجيلات البث</button>
+          </div>
+        </div>
 
-    <!-- الأزرار الجديدة 👇 -->
-    <button class="secondary-tab" data-page="subscriptions.html"><i class="fas fa-ticket-alt"></i> الاشتراكات</button>
-    <button class="secondary-tab" data-page="certificates.html"><i class="fas fa-award"></i> الشهادات</button>
-    <button class="secondary-tab" data-page="leaderboard.html"><i class="fas fa-trophy"></i> لوحة المتصدرين</button>
-    <button class="secondary-tab" data-page="2fa.html"><i class="fas fa-shield-alt"></i> المصادقة الثنائية</button>
-    <button class="secondary-tab" data-page="live-replays.html"><i class="fas fa-video"></i> تسجيلات البث</button>
-  </div>
-</div>
         <div class="export-buttons">
           <button class="export-btn" id="exportDataBtn"><i class="fas fa-download"></i> تصدير معلومات الحساب</button>
           <button class="export-btn" id="importDataBtn"><i class="fas fa-upload"></i> استيراد معلومات الحساب</button>
         </div>
 
-        <div class="videos-grid" id="previewGrid">
-          <!-- سيتم عرض آخر 3 فيديوهات كمعاينة -->
-        </div>
+        <div class="videos-grid" id="previewGrid"></div>
       `;
       container.innerHTML = html;
 
-      // ربط جميع أزرار التبويبات (بما فيها الجديدة)
-      const allTabButtons = document.querySelectorAll('.scrollable-tab, .secondary-tab');
-      allTabButtons.forEach(btn => {
+      // ربط التبويبات
+      document.querySelectorAll('.scrollable-tab, .secondary-tab').forEach(btn => {
         btn.addEventListener('click', () => {
           const page = btn.dataset.page;
           if (page) window.location.href = page;
         });
       });
 
-      // دعم السحب الأفقي للحاويات القابلة للتمرير
+      // تفعيل السحب الأفقي
       function enableHorizontalScroll(containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        let isDown = false;
-        let startX;
-        let scrollLeft;
+        let isDown = false, startX, scrollLeft;
         container.addEventListener('mousedown', (e) => {
           isDown = true;
           startX = e.pageX - container.offsetLeft;
           scrollLeft = container.scrollLeft;
           container.style.cursor = 'grabbing';
         });
-        container.addEventListener('mouseleave', () => {
-          isDown = false;
-          container.style.cursor = 'grab';
-        });
-        container.addEventListener('mouseup', () => {
-          isDown = false;
-          container.style.cursor = 'grab';
-        });
+        container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
+        container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
         container.addEventListener('mousemove', (e) => {
           if (!isDown) return;
           e.preventDefault();
@@ -1044,6 +1192,9 @@
       document.getElementById('notifyLikes').checked = localStorage.getItem('notifyLikes') === 'true';
       document.getElementById('notifyComments').checked = localStorage.getItem('notifyComments') === 'true';
       document.getElementById('notifyFollows').checked = localStorage.getItem('notifyFollows') === 'true';
+      // تحديد الثيم الحالي في المنتقي
+      const currentTheme = localStorage.getItem('ramztok_theme') || 'default';
+      highlightSelectedTheme(currentTheme);
       document.getElementById('editModal').classList.add('open');
     }
 
@@ -1062,8 +1213,12 @@
         comments: document.getElementById('notifyComments').checked,
         follows: document.getElementById('notifyFollows').checked
       };
+      // الحصول على الثيم المختار
+      const selectedThemeElem = document.querySelector('.theme-option.selected');
+      let selectedTheme = selectedThemeElem ? selectedThemeElem.dataset.theme : 'default';
+      if (selectedTheme === 'default') selectedTheme = null;
       try {
-        await updateProfileSettings(newDisplay, newBio, newEmail, newPass, notifySettings);
+        await updateProfileSettings(newDisplay, newBio, newEmail, newPass, notifySettings, selectedTheme);
         document.getElementById('editModal').classList.remove('open');
       } catch (err) {
         showToast(err.message, true);
@@ -1075,6 +1230,16 @@
       document.getElementById('editModal').classList.remove('open');
     });
 
+    // أحداث اختيار الثيم في المودال
+    document.querySelectorAll('.theme-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        const themeName = opt.dataset.theme;
+        applyTheme(themeName === 'default' ? null : themeName);
+      });
+    });
+
     document.getElementById('searchButton').addEventListener('click', () => {
       window.location.href = 'search.html';
     });
@@ -1082,6 +1247,7 @@
       window.location.href = 'live.html';
     });
 
+    loadSavedTheme();
     loadProfileData();
 
     if ('serviceWorker' in navigator) {
